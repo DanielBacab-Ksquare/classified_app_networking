@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:classified_app/styles/theme.dart';
-import 'package:classified_app/router_generator.dart';
+import 'package:classified_app/utils/router_generator.dart';
 import 'screens/home_screen.dart';
 
 main() {

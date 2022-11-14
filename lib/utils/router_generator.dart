@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/settings_screen.dart';
-import 'screens/edit_profile_screen.dart';
-import 'screens/my_ads_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/create_ad_screen.dart';
-import 'screens/edit_ad_screen.dart';
-import 'screens/product_detail_screen.dart';
-import 'screens/image_viewer_screen.dart';
+import '../screens/login_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/settings_screen.dart';
+import '../screens/edit_profile_screen.dart';
+import '../screens/my_ads_screen.dart';
+import '../screens/register_screen.dart';
+import '../screens/create_ad_screen.dart';
+import '../screens/edit_ad_screen.dart';
+import '../screens/product_detail_screen.dart';
+import '../screens/image_viewer_screen.dart';
 
 class RouteGenerator {
   var generateRoute = ((settings) {

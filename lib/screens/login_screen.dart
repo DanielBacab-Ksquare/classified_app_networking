@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:classified_app/custom_widgets/welcome_widget.dart';
+import 'package:classified_app/models/user.dart';
+import 'package:classified_app/services/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,6 +11,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<LoginScreen> {
+  TextEditingController _emailCtrl =
+      TextEditingController(text: "user1@demo.com");
+
+  TextEditingController _passwordCtrl = TextEditingController(text: "123456");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,8 +31,9 @@ class _MyWidgetState extends State<LoginScreen> {
               const SizedBox(
                 height: 35,
               ),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _emailCtrl,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
                     labelText: "Email Address",
@@ -37,8 +45,9 @@ class _MyWidgetState extends State<LoginScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _passwordCtrl,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
                     labelText: "Password",
@@ -57,7 +66,11 @@ class _MyWidgetState extends State<LoginScreen> {
                 //login button
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, "/");
+                    UserModel user = UserModel(
+                      email: _emailCtrl.text,
+                      password: _passwordCtrl.text,
+                    );
+                    AuthService().login(context, user);
                   },
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsets>(
@@ -65,7 +78,8 @@ class _MyWidgetState extends State<LoginScreen> {
                             top: 15, bottom: 15, right: 30, left: 30)),
                     elevation: MaterialStateProperty.all(0),
                     shape: MaterialStateProperty.all<OutlinedBorder>(
-                         RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10))),
                   ),
                   child: const Text(
                     "Login",

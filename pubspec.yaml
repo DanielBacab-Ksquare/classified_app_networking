@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_native_splash: ^2.2.12
+  flutter_secure_storage: ^6.0.0
   google_fonts: ^3.0.1
   http: ^0.13.5
   url_launcher: ^6.1.6
