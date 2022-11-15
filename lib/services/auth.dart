@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
-  void register(UserModel user) async {
+  void register(context, UserModel user) async {
     var url = Uri.parse("${Constants().serverUrl}/auth/register");
     print(url);
     var userObj = user.toJson();
@@ -17,6 +17,8 @@ class AuthService {
         'Content-Type': 'application/json',
       });
       print(resp.body);
+      Navigator.pushReplacementNamed(context, '/login');
+      
     } catch (e) {
       print(e);
     }

@@ -27,7 +27,7 @@ class Ad {
     sId = json['_id'];
     title = json['title'];
     description = json['description'];
-    price = json['price'].toDouble();;
+    price = json['price'].toDouble();
     images = List<String>.from(json['images'] ??
         [
           'https://image.shutterstock.com/image-vector/no-preview-image-icon-260nw-1295324875.jpg',

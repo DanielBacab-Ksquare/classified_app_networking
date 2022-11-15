@@ -12,11 +12,9 @@ class GetAllAds {
       var res = await http.get(url);
       var resAsJSON = jsonDecode(res.body);
       var adData = resAsJSON['data'];
-      //print("resultado prime: $adData");
-
+      
       ads = adData.map<Ad>((ad) => Ad.fromJson(ad)).toList();
       
-      print("resultado second: $ads");
       return ads;
     } catch (e) {
       print("Error $e");

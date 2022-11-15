@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:classified_app/custom_widgets/welcome_widget.dart';
+import 'package:classified_app/models/user.dart';
+import 'package:classified_app/services/auth.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -9,6 +11,11 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<RegisterScreen> {
+  TextEditingController _nameCtrl = TextEditingController();
+  TextEditingController _emailCtrl = TextEditingController();
+  TextEditingController _mobileCtrl = TextEditingController();
+  TextEditingController _passwordCtrl = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,57 +31,49 @@ class _MyWidgetState extends State<RegisterScreen> {
               const SizedBox(
                 height: 20,
               ),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _nameCtrl,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
                     labelText: "Full Name",
-                    labelStyle: TextStyle(
-                        fontSize: 30,
-                        color: Color(0xffe5e5e5),
-                        fontWeight: FontWeight.w600)),
+                    ),
               ),
               const SizedBox(
                 height: 10,
               ),
 
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _emailCtrl,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
                     labelText: "Email Address",
-                    labelStyle: TextStyle(
-                        fontSize: 30,
-                        color: Color(0xffe5e5e5),
-                        fontWeight: FontWeight.w600)),
+                    ),
               ),
               const SizedBox(
                 height: 10,
               ),
 
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _mobileCtrl,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
                     labelText: "Mobile Number",
-                    labelStyle: TextStyle(
-                        fontSize: 30,
-                        color: Color(0xffe5e5e5),
-                        fontWeight: FontWeight.w600)),
+                   ),
               ),
               const SizedBox(
                 height: 10,
               ),
 
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: _passwordCtrl,
+                decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
                     labelText: "Password",
-                    labelStyle: TextStyle(
-                        fontSize: 30,
-                        color: Color(0xffe5e5e5),
-                        fontWeight: FontWeight.w600)),
+                   ),
               ),
               const SizedBox(
                 height: 15,
@@ -86,7 +85,13 @@ class _MyWidgetState extends State<RegisterScreen> {
                 //login button
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, "/");
+                    UserModel user = UserModel(
+                      name: _nameCtrl.text,
+                      email: _emailCtrl.text,
+                      password: _passwordCtrl.text,
+                      mobile: _mobileCtrl.text,
+                    );
+                    AuthService().register(context, user);
                   },
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsets>(
@@ -99,7 +104,7 @@ class _MyWidgetState extends State<RegisterScreen> {
                   ),
                   child: const Text(
                     "Register Now",
-                    style: TextStyle(fontSize: 27, fontWeight: FontWeight.w700),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
@@ -114,7 +119,7 @@ class _MyWidgetState extends State<RegisterScreen> {
                     },
                     child: const Text("Already have an account?",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: Color(0xfff25723),
                         ))),
