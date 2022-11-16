@@ -30,10 +30,11 @@ class HomeScreen extends StatelessWidget {
                 builder: ((context, snapshot) {
                   if (snapshot.hasData) {
                     Map user = snapshot.data!;
-                    print("En home llega: $user");
+                    
                     return CircleAvatar(
                         maxRadius: 25,
-                        backgroundImage: NetworkImage(user["imgURL"]));
+                        backgroundImage: NetworkImage(user["imgURL"])
+                        );
                   }
                   if (snapshot.hasError) {
                     return const Center(

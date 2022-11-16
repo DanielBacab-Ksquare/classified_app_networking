@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:classified_app/services/post.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
@@ -27,32 +28,38 @@ class SettingsScreen extends StatelessWidget {
               SizedBox(height: 18),
 
               //profile
-              Row(
+              FutureBuilder(
+                future: PostService().fetchMyUser(),
+                builder: ((context, snapshot) {
+                  if (snapshot.hasData) {
+                    Map user = snapshot.data!;
+                    print("En settings llega: $user");
+                    return Row(
                 children: [
                   //profile
-                  const CircleAvatar(
+                  CircleAvatar(
                     maxRadius: 25,
-                    backgroundImage: AssetImage('images/profile_1.jpg'),
+                    backgroundImage: NetworkImage(user["imgURL"])
                   ),
                   const SizedBox(width: 18),
                   //info
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
-                        "Daniel",
-                        style: TextStyle(
+                        user["name"],
+                        style: const TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "9876543210",
+                        user["mobile"],
                         style:
-                            TextStyle(fontSize: 18, color: Color(0xff898888)),
+                            const TextStyle(fontSize: 18, color: Color(0xff898888)),
                       )
                     ],
                   ),
-                  const SizedBox(width: 110),
+                  const SizedBox(width: 70),
                   //Edit
                   TextButton(
                       onPressed: () {
@@ -65,6 +72,17 @@ class SettingsScreen extends StatelessWidget {
                             color: Color(0xfff25723),
                           )))
                 ],
+              );
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text("Something wrong"),
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }),
               ),
 
               const SizedBox(height: 30),

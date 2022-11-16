@@ -10,33 +10,33 @@ class Ad {
   String? createdAt;
   //int? iV;
 
-  Ad(
-      {this.sId,
-      this.title,
-      this.description,
-      this.price,
-      this.images,
-      this.authorName,
-      this.userId,
-      this.mobile,
-      this.createdAt,
-      //this.iV
-      });
+  Ad({
+    this.sId,
+    this.title,
+    this.description,
+    this.price,
+    this.images,
+    this.authorName,
+    this.userId,
+    this.mobile,
+    this.createdAt,
+    //this.iV
+  });
 
   Ad.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    title = json['title'];
-    description = json['description'];
+    sId = json['_id'] ?? '';
+    title = json['title'] ?? '';
+    description = json['description'] ?? '';
     price = json['price'].toDouble();
     images = List<String>.from(json['images'] ??
         [
           'https://image.shutterstock.com/image-vector/no-preview-image-icon-260nw-1295324875.jpg',
         ]);
 
-    authorName = json['authorName'];
-    userId = json['userId'];
-    mobile = json['mobile'];
-    createdAt = json['createdAt'];
+    authorName = json['authorName'] ?? '';
+    userId = json['userId'] ?? '';
+    mobile = json['mobile'] ?? '';
+    createdAt = json['createdAt'] ?? '';
     //iV = json['__v'];
   }
 
