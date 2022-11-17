@@ -52,7 +52,7 @@ class _MyWidgetState extends State<EditAdScreen> {
               height: 75,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: widget.productToEdit["product"]["images"].length,
+                  itemCount: widget.productToEdit["product"].images!.length,
                   itemBuilder: ((context, index) {
                     return Container(
                       decoration: BoxDecoration(
@@ -60,10 +60,17 @@ class _MyWidgetState extends State<EditAdScreen> {
                               color: const Color(0xff898888), width: 0.5)),
                       margin: const EdgeInsets.symmetric(horizontal: 5),
                       padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Image.asset(
-                        widget.productToEdit["product"]["images"][index],
+                      child: Image.network(
+                        widget.productToEdit["product"].images![index],
                         height: 80,
                         width: 80,
+                        errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Image.network(
+                    'https://whetstonefire.org/wp-content/uploads/2020/06/image-not-available.jpg',
+                    height: double.infinity,
+                    width: double.infinity,
+                    fit: BoxFit.cover,);}
                       ),
                     );
                   })),
@@ -80,7 +87,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                   ),
                   //title
                   TextFormField(
-                    initialValue: widget.productToEdit["product"]["title"],
+                    initialValue: widget.productToEdit["product"].title!,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
@@ -102,7 +109,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                   TextFormField(
                     keyboardType: TextInputType.number,
                     initialValue:
-                        widget.productToEdit["product"]["price"].toString(),
+                        widget.productToEdit["product"].price!.toString(),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
@@ -125,7 +132,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                   TextFormField(
                     keyboardType: TextInputType.phone,
                     initialValue:
-                        "+${widget.productToEdit["product"]["contactNumber"]}",
+                        "${widget.productToEdit["product"].mobile!}",
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
@@ -146,8 +153,7 @@ class _MyWidgetState extends State<EditAdScreen> {
 
                   //Description
                   TextFormField(
-                    initialValue: widget.productToEdit["product"]
-                        ["description"],
+                    initialValue: widget.productToEdit["product"].description!,
                     maxLines: 6,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),

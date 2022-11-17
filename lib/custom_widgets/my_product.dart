@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class myProduct extends StatelessWidget {
   String image;
   String title;
-  int days;
+  String days;
   double price;
 
   myProduct({
@@ -27,7 +27,16 @@ class myProduct extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(image, width: 80, height: 80, fit: BoxFit.fill),
+            Image.network(image, width: 80, height: 80, fit: BoxFit.fill,
+                errorBuilder: (BuildContext context, Object exception,
+                    StackTrace? stackTrace) {
+              return Image.network(
+                'https://whetstonefire.org/wp-content/uploads/2020/06/image-not-available.jpg',
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              );
+            }),
             const SizedBox(width: 10),
             //info
             Column(
@@ -36,7 +45,7 @@ class myProduct extends StatelessWidget {
               children: [
                 Text(title,
                     style: const TextStyle(
-                        fontSize: 25, fontWeight: FontWeight.w700),
+                        fontSize: 18, fontWeight: FontWeight.w700),
                     textAlign: TextAlign.left),
                 //Here goes the time ago
                 Row(

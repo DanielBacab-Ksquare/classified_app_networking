@@ -17,13 +17,14 @@ class FetchUserModel {
       this.iV});
 
   FetchUserModel.fromJson(Map<String, dynamic> json) {
-    sId = json['_id']??'';
-    name = json['name']??'';
-    email = json['email']??'';
-    mobile = json['mobile']??'';
-    imgURL = json['imgURL']??'https://image.shutterstock.com/image-vector/no-preview-image-icon-260nw-1295324875.jpg';
-    date = json['date']??'';
-    iV = json['__v']??'';
+    sId = json['_id'] ?? '';
+    name = json['name'] ?? '';
+    email = json['email'] ?? '';
+    mobile = json['mobile'] ?? '';
+    imgURL = json['imgURL'] ??
+        'https://image.shutterstock.com/image-vector/no-preview-image-icon-260nw-1295324875.jpg';
+    date = json['date'] ?? '';
+    iV = json['__v'] ?? '';
   }
 
   Map<String, dynamic> toJson() {

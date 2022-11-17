@@ -18,6 +18,11 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(icon: Icon(Icons.arrow_back),
+             onPressed:() {
+               Navigator.pushNamed(context, '/');
+             },
+    )     ,
           title: const Text("Settings"),
           elevation: 0,
         ),
@@ -35,44 +40,44 @@ class SettingsScreen extends StatelessWidget {
                     Map user = snapshot.data!;
                     print("En settings llega: $user");
                     return Row(
-                children: [
-                  //profile
-                  CircleAvatar(
-                    maxRadius: 25,
-                    backgroundImage: NetworkImage(user["imgURL"])
-                  ),
-                  const SizedBox(width: 18),
-                  //info
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user["name"],
-                        style: const TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        user["mobile"],
-                        style:
-                            const TextStyle(fontSize: 18, color: Color(0xff898888)),
-                      )
-                    ],
-                  ),
-                  const SizedBox(width: 70),
-                  //Edit
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, "/editprofile");
-                      },
-                      child: const Text("Edit",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xfff25723),
-                          )))
-                ],
-              );
+                      children: [
+                        //profile
+                        CircleAvatar(
+                            maxRadius: 25,
+                            backgroundImage: NetworkImage(user["imgURL"] ??
+                                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")),
+                        const SizedBox(width: 18),
+                        //info
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user["name"] ?? "",
+                              style: const TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              user["mobile"] ?? "",
+                              style: const TextStyle(
+                                  fontSize: 18, color: Color(0xff898888)),
+                            )
+                          ],
+                        ),
+                        const SizedBox(width: 70),
+                        //Edit
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/editprofile");
+                            },
+                            child: const Text("Edit",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xfff25723),
+                                )))
+                      ],
+                    );
                   }
                   if (snapshot.hasError) {
                     return const Center(

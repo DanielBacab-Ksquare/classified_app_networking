@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:classified_app/models/fetchuser.dart';
 import 'package:classified_app/utils/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:classified_app/models/ads.dart';
 
 class PostService {
   Future<Map> fetchMyUser() async {
@@ -31,4 +31,32 @@ class PostService {
     print("Pasa esto: $user");
     return user;
   }
+
+  //my ads
+  Future<List<Ad>> fetchMyAdData() async {
+    var storage = FlutterSecureStorage();
+    var url = Uri.parse("${Constants().serverUrl}/ads/user");
+     var token = await storage.read(key: 'token');
+    List<Ad> ads = [];
+    try {
+      var res = await http.post(url,headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
+      var resAsJSON = jsonDecode(res.body);
+      var adData = resAsJSON['data'];
+      
+      ads = adData.map<Ad>((ad) => Ad.fromJson(ad)).toList();
+      
+      return ads;
+    } catch (e) {
+      print("Error $e");
+      return ads;
+    }
+  }
+
+
+
+
+
 }
