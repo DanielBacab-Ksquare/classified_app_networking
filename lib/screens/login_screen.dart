@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:classified_app/custom_widgets/welcome_widget.dart';
 import 'package:classified_app/models/user.dart';
@@ -11,10 +13,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<LoginScreen> {
+  int _isLoading = 0;
+
+  final List<Widget> _widgetOptions = <Widget>[
+    const Text(
+      '',
+    ),
+    const CircularProgressIndicator(),
+  ];
+
   TextEditingController _emailCtrl =
       TextEditingController(text: "daniel.bacab@itksquare.edu.mx");
 
-  TextEditingController _passwordCtrl = TextEditingController(text: "bestpasswordever");
+  TextEditingController _passwordCtrl =
+      TextEditingController(text: "bestpasswordever");
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +46,10 @@ class _MyWidgetState extends State<LoginScreen> {
               TextField(
                 controller: _emailCtrl,
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(0))),
-                    labelText: "Email Address",
-                   ),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(0))),
+                  labelText: "Email Address",
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -45,10 +57,10 @@ class _MyWidgetState extends State<LoginScreen> {
               TextField(
                 controller: _passwordCtrl,
                 decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(0))),
-                    labelText: "Password",
-                    ),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(0))),
+                  labelText: "Password",
+                ),
               ),
               const SizedBox(
                 height: 15,
@@ -60,11 +72,24 @@ class _MyWidgetState extends State<LoginScreen> {
                 //login button
                 child: ElevatedButton(
                   onPressed: () {
+                    setState(() {
+                      _isLoading = 1;
+                    });
+
                     UserModel user = UserModel(
                       email: _emailCtrl.text,
                       password: _passwordCtrl.text,
                     );
-                    AuthService().login(context, user);
+
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      AuthService().login(context, user);
+                        setState(() {
+                          setState(() {
+                                            _isLoading = 0;
+                                          });
+                        });
+                      });
+
                   },
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsets>(
@@ -96,7 +121,9 @@ class _MyWidgetState extends State<LoginScreen> {
                           fontWeight: FontWeight.w700,
                           color: Color(0xfff25723),
                         ))),
-              )
+              ),
+
+              _widgetOptions.elementAt(_isLoading),
             ],
           ),
         ),

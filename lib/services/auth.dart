@@ -10,7 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthService {
   void register(context, UserModel user) async {
     var url = Uri.parse("${Constants().serverUrl}/auth/register");
-    print(url);
+
     var userObj = user.toJson();
     try {
       var resp = await http.post(url, body: jsonEncode(userObj), headers: {
@@ -21,11 +21,11 @@ class AuthService {
         AlertManager().displaySnackbar(context, respObj['message']);
       }
       if (respObj['status'] == true) {
-        AlertManager().displaySnackbar(context,'Successful registration');
+        AlertManager().displaySnackbar(context, 'Successful registration');
       }
 
       //print(resp.body);
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       print(e);
     }

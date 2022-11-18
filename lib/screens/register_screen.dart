@@ -11,6 +11,16 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<RegisterScreen> {
+  int _isLoading = 0;
+
+  final List<Widget> _widgetOptions = <Widget>[
+    const Text(
+      '',
+    ),
+    const CircularProgressIndicator(),
+  ];
+
+
   TextEditingController _nameCtrl = TextEditingController();
   TextEditingController _emailCtrl = TextEditingController();
   TextEditingController _mobileCtrl = TextEditingController();
@@ -85,13 +95,25 @@ class _MyWidgetState extends State<RegisterScreen> {
                 //login button
                 child: ElevatedButton(
                   onPressed: () {
+                     setState(() {
+                      _isLoading = 1;
+                    });
+
                     UserModel user = UserModel(
                       name: _nameCtrl.text,
                       email: _emailCtrl.text,
                       password: _passwordCtrl.text,
                       mobile: _mobileCtrl.text,
                     );
-                    AuthService().register(context, user);
+
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      AuthService().register(context, user);
+                        setState(() {
+                          setState(() {
+                              _isLoading = 0;
+                                 });
+                        });
+                      });          
                   },
                   style: ButtonStyle(
                     padding: MaterialStateProperty.all<EdgeInsets>(
@@ -123,7 +145,8 @@ class _MyWidgetState extends State<RegisterScreen> {
                           fontWeight: FontWeight.w700,
                           color: Color(0xfff25723),
                         ))),
-              )
+              ),
+              _widgetOptions.elementAt(_isLoading),
             ],
           ),
         ),

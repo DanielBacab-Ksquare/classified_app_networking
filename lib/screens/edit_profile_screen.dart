@@ -17,6 +17,15 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<EditProfileScreen> {
+   int _isLoading = 0;
+
+  final List<Widget> _widgetOptions = <Widget>[
+    const Text(
+      '',
+    ),
+    const CircularProgressIndicator(),
+  ];
+
   String _imagePath = '';
   String _imageServerPath = '';
   String? profilePic =
@@ -178,6 +187,10 @@ class _MyWidgetState extends State<EditProfileScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 //here goes the update
+                                setState(() {
+                                  _isLoading = 1;
+                                  });
+
                                 UserModel user = UserModel(
                                   name: _nameCtrl.text,
                                   email: _emailCtrl.text,
@@ -185,7 +198,16 @@ class _MyWidgetState extends State<EditProfileScreen> {
                                   imgURL: profilePic,
                                 );
 
-                                PatchService().updateProfile(context, user);
+
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                                  PatchService().updateProfile(context, user);
+                                    setState(() {
+                                      setState(() {
+                                          _isLoading = 0;
+                                            });
+                                    });
+                                  });       
+
                               },
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all<EdgeInsets>(
@@ -222,10 +244,12 @@ class _MyWidgetState extends State<EditProfileScreen> {
                                       fontWeight: FontWeight.w700,
                                       color: Color(0xfff25723),
                                     ))),
-                          )
+                          ),
+                          _widgetOptions.elementAt(_isLoading),
                         ],
                       ),
                     ),
+
                   ],
                 );
               }

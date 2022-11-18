@@ -15,6 +15,15 @@ class EditAdScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<EditAdScreen> {
+   int _isLoading = 0;
+
+  final List<Widget> _widgetOptions = <Widget>[
+    const Text(
+      '',
+    ),
+    const CircularProgressIndicator(),
+  ];
+
   String _imagePath = '';
   String _imageServerPath = '';
 
@@ -196,7 +205,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                   //Description
                   TextField(
                     controller: _description,
-                    maxLines: 6,
+                    maxLines: 5,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
@@ -212,11 +221,14 @@ class _MyWidgetState extends State<EditAdScreen> {
                   ),
                   //Submit Ad button
                   SizedBox(
-                    height: 70,
+                    height: 60,
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
                         //Here goes the update of the product
+                        setState(() {
+                      _isLoading = 1;
+                           });
 
                         Ad ad = Ad(
                             title: _title.text,
@@ -226,9 +238,19 @@ class _MyWidgetState extends State<EditAdScreen> {
                             images: localImages,
                             authorName:
                                 widget.productToEdit["product"].authorName!);
+
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                                PatchService().updateAd(
+                                      context, ad, widget.productToEdit["product"].sId!);
+                                  setState(() {
+                                    setState(() {
+                                            _isLoading = 0;
+                                          });
+                        });
+                      });
+
                        
-                        PatchService().updateAd(
-                            context, ad, widget.productToEdit["product"].sId!);
+                       
                       },
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all<EdgeInsets>(
@@ -245,6 +267,8 @@ class _MyWidgetState extends State<EditAdScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 15,),
+                  _widgetOptions.elementAt(_isLoading),
                 ],
               ),
             ),

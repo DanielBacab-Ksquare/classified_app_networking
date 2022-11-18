@@ -16,6 +16,15 @@ class CreateAdScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<CreateAdScreen> {
+  int _isLoading = 0;
+
+  final List<Widget> _widgetOptions = <Widget>[
+    const Text(
+      '',
+    ),
+    const CircularProgressIndicator(),
+  ];
+
   List<String> localImages2 = [];
   String _imagePath = '';
   String _imageServerPath = '';
@@ -43,7 +52,7 @@ class _MyWidgetState extends State<CreateAdScreen> {
         _imageServerPath = respJson['data']['path'];
 
         localImages2.add(_imageServerPath);
-        print("esto hay: $localImages2");
+       
       });
     }
 
@@ -193,7 +202,7 @@ class _MyWidgetState extends State<CreateAdScreen> {
                   //Description
                   TextField(
                     controller: _description,
-                    maxLines: 6,
+                    maxLines: 5,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
@@ -209,11 +218,14 @@ class _MyWidgetState extends State<CreateAdScreen> {
                   ),
                   //Submit Ad button
                   SizedBox(
-                    height: 70,
+                    height: 60,
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
                         //Here goes the update of the product
+                         setState(() {
+                      _isLoading = 1;
+                           });
 
                         Ad ad = Ad(
                             title: _title.text,
@@ -222,8 +234,18 @@ class _MyWidgetState extends State<CreateAdScreen> {
                             mobile: _mobileCtrl.text,
                             images: localImages2,
                             );
+
+                            
+                                Future.delayed(const Duration(milliseconds: 500), () {
+                               PostService().createAd(context, ad); 
+                                  setState(() {
+                                    setState(() {
+                                            _isLoading = 0;
+                                          });
+                        });
+                      });
                        
-                        PostService().createAd(context, ad); 
+                        
                       },
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all<EdgeInsets>(
@@ -240,6 +262,8 @@ class _MyWidgetState extends State<CreateAdScreen> {
                       ),
                     ),
                   ),
+                   const SizedBox(height: 15,),
+                  _widgetOptions.elementAt(_isLoading),
                 ],
               ),
             ),

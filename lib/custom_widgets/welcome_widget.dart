@@ -6,7 +6,7 @@ class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 350,
+        height: 330,
         width: double.infinity,
         color: Colors.yellow,
         child: Stack(
