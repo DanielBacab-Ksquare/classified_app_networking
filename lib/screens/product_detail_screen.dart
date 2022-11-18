@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:classified_app/utils/timeago.dart';
+
 
 class ProductDetailScreen extends StatefulWidget {
   dynamic productToDisplay;
@@ -19,8 +21,11 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<ProductDetailScreen> {
+
   @override
   Widget build(BuildContext context) {
+      var parsedDate = DateTime.parse(widget.productToDisplay["product"].createdAt!);
+     String time1 = convertToAgo(parsedDate);
     return Scaffold(
         appBar: AppBar(),
         body: Center(
@@ -82,7 +87,7 @@ class _MyWidgetState extends State<ProductDetailScreen> {
                           color: Color(0xff898888),
                           Icons.access_time),
                       Text(
-                          "${widget.productToDisplay["product"].createdAt!}",
+                          time1,
                           style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,

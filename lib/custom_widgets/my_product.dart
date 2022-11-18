@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:classified_app/utils/timeago.dart';
 
 class myProduct extends StatelessWidget {
   String image;
@@ -14,8 +15,12 @@ class myProduct extends StatelessWidget {
     required this.price,
   });
 
+ 
+
   @override
   Widget build(BuildContext context) {
+    var parsedDate = DateTime.parse(days);
+     String time1 = convertToAgo(parsedDate);
     return Container(
         height: 100,
         width: 400,
@@ -52,7 +57,7 @@ class myProduct extends StatelessWidget {
                   children: [
                     const Icon(
                         size: 10, color: Color(0xff898888), Icons.access_time),
-                    Text(" $days days ago",
+                    Text(time1,
                         style: const TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
