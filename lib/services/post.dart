@@ -4,6 +4,7 @@ import 'package:classified_app/utils/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:classified_app/models/ads.dart';
+import 'package:classified_app/utils/alert_manager.dart';
 
 class PostService {
   Future<Map> fetchMyUser() async {
@@ -19,12 +20,13 @@ class PostService {
         'Authorization': 'Bearer $token'
       },
     );
-    print(resp.statusCode);
+   
     if (resp.statusCode == 401) {
       print("fetchMyuser is unauthorized");
     }
-    print(resp.body);
+    
     var respJson = jsonDecode(resp.body);
+   
 
     var postData = respJson['data'];
     user = postData;
@@ -45,6 +47,8 @@ class PostService {
         'Authorization': 'Bearer $token'
       });
       var resAsJSON = jsonDecode(res.body);
+      
+      
       var adData = resAsJSON['data'];
       
       ads = adData.map<Ad>((ad) => Ad.fromJson(ad)).toList();
@@ -68,6 +72,13 @@ class PostService {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       });
+       var respObj = jsonDecode(resp.body);
+       if (respObj['status'] == false) {
+        AlertManager().displaySnackbar(context, respObj['message']);
+      }
+      if (respObj['status'] == true) {
+        AlertManager().displaySnackbar(context, 'Ad successfully created');
+      }
       
 
       Navigator.pushReplacementNamed(context, '/');

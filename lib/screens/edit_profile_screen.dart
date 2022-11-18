@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:classified_app/services/post.dart';
 import 'package:classified_app/models/user.dart';
 import 'package:classified_app/services/patch.dart';
+import 'dart:convert';
+import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class EditProfileScreen extends StatefulWidget {
   EditProfileScreen({
@@ -13,6 +17,13 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<EditProfileScreen> {
+  String _imagePath = '';
+  String _imageServerPath = '';
+  String? profilePic =
+      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+
+  bool firstPic = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +47,40 @@ class _MyWidgetState extends State<EditProfileScreen> {
                     TextEditingController(text: user["email"]);
                 TextEditingController? _mobileCtrl =
                     TextEditingController(text: user["mobile"]);
-                String? profilePic = user["imgURL"];
+
+                if (firstPic) {
+                  profilePic = user["imgURL"];
+                }
+
+                _upload(filePath) async {
+                  var url = Uri.parse(
+                      "https://adlisting.herokuapp.com/upload/profile");
+                  var request = http.MultipartRequest('POST', url);
+                  MultipartFile image =
+                      await http.MultipartFile.fromPath('avatar', filePath);
+                  request.files.add(image);
+                  var response = await request.send();
+                  var resp = await response.stream.bytesToString();
+                  var respJson = jsonDecode(resp);
+                  setState(() {
+                    _imageServerPath = respJson['data']['path'];
+                    print("se sube: $_imageServerPath");
+                    firstPic = false;
+                    profilePic = _imageServerPath;
+                    //print("esto hay: $localImages2");
+                  });
+                }
+
+                void captureImageFromGallery() async {
+                  var file = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
+                  if (file != null) {
+                    setState(() {
+                      _imagePath = file.path;
+                    });
+                    _upload(file.path);
+                  }
+                }
 
                 return Column(
                   children: [
@@ -44,10 +88,17 @@ class _MyWidgetState extends State<EditProfileScreen> {
                       height: 15,
                     ),
                     //avatar
-                    CircleAvatar(
-                      maxRadius: 45,
-                      backgroundImage: NetworkImage(profilePic ??
-                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
+                    GestureDetector(
+                      onTap: () {
+                        //change profile pic
+                        captureImageFromGallery();
+                        print("profilepic: $profilePic");
+                      },
+                      child: CircleAvatar(
+                        maxRadius: 45,
+                        backgroundImage: NetworkImage(profilePic ??
+                            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
+                      ),
                     ),
 
                     SizedBox(
