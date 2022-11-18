@@ -81,7 +81,8 @@ class HomeScreen extends StatelessWidget {
                           //image: "images/merida.jpg",
                           image: ads[index].images![0],
                           title: ads[index].title!,
-                          price: ads[index].price!));
+                          price: ads[index].price!.toDouble()
+                          ));
                 });
           }
           if (snapshot.hasError) {
@@ -94,6 +95,17 @@ class HomeScreen extends StatelessWidget {
           );
         }),
       ),
+
+        floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/createad");
+        },
+        backgroundColor: const Color(0xfff25723),
+        child: const Icon(Icons.add_photo_alternate_outlined),
+      ),
+
+
+
     );
   }
 }

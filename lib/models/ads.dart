@@ -2,7 +2,7 @@ class Ad {
   String? sId;
   String? title;
   String? description;
-  double? price;
+  num? price;
   List<String>? images;
   String? authorName;
   String? userId;
@@ -24,19 +24,19 @@ class Ad {
   });
 
   Ad.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'] ?? '';
-    title = json['title'] ?? '';
-    description = json['description'] ?? '';
-    price = json['price'].toDouble();
+    sId = json['_id'] ?? '000';
+    title = json['title'] ?? 'title';
+    description = json['description'] ?? 'description';
+    price = json['price']??0.0;
     images = List<String>.from(json['images'] ??
         [
           'https://image.shutterstock.com/image-vector/no-preview-image-icon-260nw-1295324875.jpg',
         ]);
 
-    authorName = json['authorName'] ?? '';
-    userId = json['userId'] ?? '';
-    mobile = json['mobile'] ?? '';
-    createdAt = json['createdAt'] ?? '';
+    authorName = json['authorName'] ?? 'user';
+    userId = json['userId'] ?? 'user';
+    mobile = json['mobile'] ?? 'mobile';
+    createdAt = json['createdAt'] ?? 'createat';
     //iV = json['__v'];
   }
 

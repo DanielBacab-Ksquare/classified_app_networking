@@ -16,7 +16,7 @@ class AuthService {
       var resp = await http.post(url, body: jsonEncode(userObj), headers: {
         'Content-Type': 'application/json',
       });
-      print(resp.body);
+      //print(resp.body);
       Navigator.pushReplacementNamed(context, '/login');
       
     } catch (e) {
@@ -34,14 +34,14 @@ class AuthService {
         'Content-Type': 'application/json',
       });
       var respObj = jsonDecode(resp.body);
-      print(respObj);
+      //print(respObj);
       if (respObj['status'] == false) {
         AlertManager().displaySnackbar(context, respObj['message']);
       }
       if (respObj['status'] == true) {
         storage.write(key: 'userId', value: respObj['data']['user']['_id']);
         storage.write(key: 'token', value: respObj['data']['token']);
-        print("El token es: ${respObj['data']['token']}");
+        //print("El token es: ${respObj['data']['token']}");
         /* storage.write(
             key: 'refreshToken', value: respObj['data']['refreshToken']); */
         Navigator.pushReplacementNamed(context, '/');

@@ -13,6 +13,11 @@ class MyAdsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(icon: Icon(Icons.arrow_back),
+             onPressed:() {
+               Navigator.pushNamed(context, '/settings');
+             },
+    )     ,
           title: const Text("My Ads"),
           elevation: 0,
         ),
@@ -40,7 +45,7 @@ class MyAdsScreen extends StatelessWidget {
                         image: ads[index].images![0],
                         title: ads[index].title!,
                         days: ads[index].createdAt!,
-                        price: ads[index].price!),
+                        price: ads[index].price!.toDouble()),
                   );
                 })),
           ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:classified_app/utils/constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -52,6 +53,27 @@ class PostService {
     } catch (e) {
       print("Error $e");
       return ads;
+    }
+  }
+
+
+  void createAd(context, Ad ad) async {
+    var storage = FlutterSecureStorage();
+    var url = Uri.parse("${Constants().serverUrl}/ads");
+    var token = await storage.read(key: 'token');
+
+    var userObj = ad.toJson();
+    try {
+      var resp = await http.post(url, body: jsonEncode(userObj), headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      });
+      
+
+      Navigator.pushReplacementNamed(context, '/');
+      
+    } catch (e) {
+      print(e);
     }
   }
 

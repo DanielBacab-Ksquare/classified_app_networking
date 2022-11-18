@@ -1,20 +1,67 @@
+import 'dart:convert';
+import 'package:http/http.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:classified_app/models/ads.dart';
+import 'package:classified_app/services/post.dart';
 
 class CreateAdScreen extends StatefulWidget {
-  const CreateAdScreen({super.key});
+  CreateAdScreen({
+    super.key,
+  });
 
   @override
   State<CreateAdScreen> createState() => _MyWidgetState();
 }
 
 class _MyWidgetState extends State<CreateAdScreen> {
+  List<String> localImages2 = [];
+  String _imagePath = '';
+  String _imageServerPath = '';
+
   @override
   Widget build(BuildContext context) {
+    TextEditingController _title = TextEditingController();
+
+    TextEditingController? _description = TextEditingController();
+
+    TextEditingController? _mobileCtrl = TextEditingController();
+
+    TextEditingController? _price = TextEditingController();
+
+    _upload(filePath) async {
+      var url = Uri.parse("https://adlisting.herokuapp.com/upload/profile");
+      var request = http.MultipartRequest('POST', url);
+      MultipartFile image =
+          await http.MultipartFile.fromPath('avatar', filePath);
+      request.files.add(image);
+      var response = await request.send();
+      var resp = await response.stream.bytesToString();
+      var respJson = jsonDecode(resp);
+      setState(() {
+        _imageServerPath = respJson['data']['path'];
+
+        localImages2.add(_imageServerPath);
+        print("esto hay: $localImages2");
+      });
+    }
+
+    void captureImageFromGallery() async {
+      var file = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (file != null) {
+        setState(() {
+          _imagePath = file.path;
+        });
+        _upload(file.path);
+      }
+    }
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-            "Create Ad",
+            "Edit Ad",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           elevation: 0,
@@ -27,25 +74,60 @@ class _MyWidgetState extends State<CreateAdScreen> {
             ),
 
             //add photo
-            Container(
-              height: 150,
-              width: 150,
-              decoration: BoxDecoration(
-                  border:
-                      Border.all(color: const Color(0xff898888), width: 0.5)),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Icon(size: 60, Icons.add_photo_alternate_outlined),
-                    SizedBox(height: 7),
-                    Text("Tap  to upload",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold)),
-                  ]),
+            GestureDetector(
+              onTap: () {
+                //Create a new image
+                captureImageFromGallery();
+              },
+              child: Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                    border:
+                        Border.all(color: const Color(0xff898888), width: 0.5)),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      Icon(size: 40, Icons.add_photo_alternate_outlined),
+                      SizedBox(height: 7),
+                      Text("Tap  to upload",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold)),
+                    ]),
+              ),
             ),
+
             const SizedBox(height: 15),
+
             //images
+            Container(
+              padding: const EdgeInsets.only(left: 15),
+              height: 75,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: localImages2.length,
+                  itemBuilder: ((context, index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xff898888), width: 0.5)),
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Image.network(localImages2[index],
+                          height: 80,
+                          width: 80, errorBuilder: (BuildContext context,
+                              Object exception, StackTrace? stackTrace) {
+                        return Image.network(
+                          'https://whetstonefire.org/wp-content/uploads/2020/06/image-not-available.jpg',
+                          height: double.infinity,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        );
+                      }),
+                    );
+                  })),
+            ),
 
             //text forms
             SizedBox(
@@ -57,40 +139,33 @@ class _MyWidgetState extends State<CreateAdScreen> {
                     height: 30,
                   ),
                   //title
-                  TextFormField(
+                  TextField(
+                    controller: _title,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(10),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        labelText: "Title",
-                        alignLabelWithHint: true,
-                        labelStyle: TextStyle(
-                            fontSize: 30,
-                            color: Color(0xffe5e5e5),
-                            fontWeight: FontWeight.w600)),
+                      contentPadding: EdgeInsets.all(10),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      labelText: "Title",
+                    ),
                   ),
 
                   const SizedBox(
                     height: 15,
                   ),
                   //Price
-                  TextFormField(
+                  TextField(
+                    controller: _price,
+                    keyboardType: TextInputType.number,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(10),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        labelText: "Price",
-                        alignLabelWithHint: true,
-                        labelStyle: TextStyle(
-                            fontSize: 30,
-                            color: Color(0xffe5e5e5),
-                            fontWeight: FontWeight.w600)),
+                      contentPadding: EdgeInsets.all(10),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      labelText: "Price",
+                    ),
                   ),
 
                   const SizedBox(
@@ -98,20 +173,17 @@ class _MyWidgetState extends State<CreateAdScreen> {
                   ),
 
                   //Contact number
-                  TextFormField(
+                  TextField(
+                    controller: _mobileCtrl,
+                    //keyboardType: TextInputType.phone,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(10),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        labelText: "Contact Number",
-                        alignLabelWithHint: true,
-                        labelStyle: TextStyle(
-                            fontSize: 30,
-                            color: Color(0xffe5e5e5),
-                            fontWeight: FontWeight.w600)),
+                      contentPadding: EdgeInsets.all(10),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      labelText: "Contact number",
+                    ),
                   ),
 
                   const SizedBox(
@@ -119,21 +191,17 @@ class _MyWidgetState extends State<CreateAdScreen> {
                   ),
 
                   //Description
-                  TextFormField(
-                    maxLines: 4,
+                  TextField(
+                    controller: _description,
+                    maxLines: 6,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w500),
                     decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(10),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        labelText: "Description",
-                        alignLabelWithHint: true,
-                        labelStyle: TextStyle(
-                            fontSize: 30,
-                            color: Color(0xffe5e5e5),
-                            fontWeight: FontWeight.w600)),
+                      contentPadding: EdgeInsets.all(10),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      labelText: "Description",
+                    ),
                   ),
 
                   const SizedBox(
@@ -145,7 +213,17 @@ class _MyWidgetState extends State<CreateAdScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        //Here goes the update of the product
+
+                        Ad ad = Ad(
+                            title: _title.text,
+                            description: _description.text,
+                            price: double.tryParse(_price.text),
+                            mobile: _mobileCtrl.text,
+                            images: localImages2,
+                            );
+                       
+                        PostService().createAd(context, ad); 
                       },
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all<EdgeInsets>(
