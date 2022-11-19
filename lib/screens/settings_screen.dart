@@ -31,6 +31,7 @@ class SettingsScreen extends StatelessWidget {
             width: 350,
             child: Column(children: [
               SizedBox(height: 18),
+              
 
               //profile
               FutureBuilder(
@@ -48,23 +49,26 @@ class SettingsScreen extends StatelessWidget {
                                 "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")),
                         const SizedBox(width: 18),
                         //info
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user["name"] ?? "",
-                              style: const TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              user["mobile"] ?? "",
-                              style: const TextStyle(
-                                  fontSize: 18, color: Color(0xff898888)),
-                            )
-                          ],
+                        SizedBox(
+                          width: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user["name"] ?? "",
+                                style: const TextStyle(
+                                    fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                user["mobile"] ?? "",
+                                style: const TextStyle(
+                                    fontSize: 18, color: Color(0xff898888)),
+                              )
+                            ],
+                          ),
                         ),
-                        const SizedBox(width: 70),
+                        //const SizedBox(width: 25),
                         //Edit
                         TextButton(
                             onPressed: () {

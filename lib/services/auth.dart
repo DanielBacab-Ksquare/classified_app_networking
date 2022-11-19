@@ -9,7 +9,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
   void register(context, UserModel user) async {
+    var storage = FlutterSecureStorage();
+
     var url = Uri.parse("${Constants().serverUrl}/auth/register");
+    var url2 = Uri.parse("${Constants().serverUrl}/auth/login");
 
     var userObj = user.toJson();
     try {
@@ -22,10 +25,23 @@ class AuthService {
       }
       if (respObj['status'] == true) {
         AlertManager().displaySnackbar(context, 'Successful registration');
-      }
 
-      //print(resp.body);
-      Navigator.pushReplacementNamed(context, '/');
+        try {
+          var resp2 =
+              await http.post(url2, body: jsonEncode(userObj), headers: {
+            'Content-Type': 'application/json',
+          });
+          var respObj2 = jsonDecode(resp2.body);
+          if (respObj2['status'] == true) {
+            storage.write(
+                key: 'userId', value: respObj2['data']['user']['_id']);
+            storage.write(key: 'token', value: respObj2['data']['token']);
+            Navigator.pushReplacementNamed(context, '/');
+          }
+        } catch (e) {
+          print(e);
+        }
+      }
     } catch (e) {
       print(e);
     }
@@ -34,7 +50,7 @@ class AuthService {
   void login(context, UserModel user) async {
     var storage = FlutterSecureStorage();
     var url = Uri.parse("${Constants().serverUrl}/auth/login");
-    print(url);
+
     var userObj = user.toJson();
     try {
       var resp = await http.post(url, body: jsonEncode(userObj), headers: {
@@ -49,43 +65,10 @@ class AuthService {
         AlertManager().displaySnackbar(context, 'Successful login');
         storage.write(key: 'userId', value: respObj['data']['user']['_id']);
         storage.write(key: 'token', value: respObj['data']['token']);
-        //print("El token es: ${respObj['data']['token']}");
-        /* storage.write(
-            key: 'refreshToken', value: respObj['data']['refreshToken']); */
         Navigator.pushReplacementNamed(context, '/');
       }
     } catch (e) {
       print(e);
     }
   }
-
-  /* Future<bool> refreshToken() async {
-    var storage = FlutterSecureStorage();
-    var userId = await storage.read(key: 'userId');
-    var refreshToken = await storage.read(key: 'refreshToken');
-    var url = Uri.parse("${Constants().serverUrl}/auth/refreshToken");
-    if (refreshToken != null) {
-      var resp = await http.post(url,
-          body: jsonEncode(
-            {
-              "id": userId,
-              "refreshToken": refreshToken,
-            },
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-          });
-      var respObj = jsonDecode(resp.body);
-      if (respObj['status'] == true) {
-        storage.write(key: 'token', value: respObj['data']['token']);
-        storage.write(
-            key: 'refreshToken', value: respObj['data']['refreshToken']);
-      }
-      return true;
-    } else {
-      //Navigator.pushReplacementNamed(context, '/');
-      print("");
-      return false;
-    }
-  } */
 }
