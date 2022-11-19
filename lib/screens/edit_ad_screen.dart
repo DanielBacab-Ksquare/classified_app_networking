@@ -19,7 +19,7 @@ class _MyWidgetState extends State<EditAdScreen> {
 
   final List<Widget> _widgetOptions = <Widget>[
     const Text(
-      '',
+      'Wait for your images to load before entering other data',
     ),
     const CircularProgressIndicator(),
   ];
@@ -214,6 +214,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         labelText: "Description",
+                         alignLabelWithHint: true,
                       ),
                     ),
         

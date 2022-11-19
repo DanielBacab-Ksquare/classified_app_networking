@@ -211,6 +211,7 @@ class _MyWidgetState extends State<CreateAdScreen> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10))),
                         labelText: "Description",
+                        alignLabelWithHint: true,
                       ),
                     ),
         
