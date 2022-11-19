@@ -78,7 +78,6 @@ class _MyWidgetState extends State<EditProfileScreen> {
                     var respJson = jsonDecode(resp);
                     setState(() {
                       _imageServerPath = respJson['data']['path'];
-                      print("se sube: $_imageServerPath");
                       firstPic = false;
                       profilePic = _imageServerPath;
                       //print("esto hay: $localImages2");
@@ -107,7 +106,6 @@ class _MyWidgetState extends State<EditProfileScreen> {
                         onTap: () {
                           //change profile pic
                           captureImageFromGallery();
-                          print("profilepic: $profilePic");
                         },
                         child: CircleAvatar(
                           maxRadius: 45,

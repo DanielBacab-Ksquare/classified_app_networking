@@ -1,13 +1,11 @@
 import 'package:classified_app/custom_widgets/my_product.dart';
 import 'package:flutter/material.dart';
-import 'package:classified_app/data/products_info.dart';
 import 'package:classified_app/models/ads.dart';
 import 'package:classified_app/services/post.dart';
 
 class MyAdsScreen extends StatelessWidget {
   MyAdsScreen({super.key});
 
-  final adsInfo = ProductsInfo();
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,7 @@ import 'package:classified_app/custom_widgets/product.dart';
 import 'package:classified_app/models/ads.dart';
 
 import 'package:flutter/material.dart';
-import 'package:classified_app/data/products_info.dart';
+
 
 import 'package:classified_app/services/ads.dart';
 import 'package:classified_app/services/post.dart';
@@ -10,7 +10,7 @@ import 'package:classified_app/services/post.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final adsInfo = ProductsInfo();
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,18 +48,12 @@ class HomeScreen extends StatelessWidget {
               )),
         ],
       ),
-      /* IconButton(
-            onPressed: () {
-              //_fetchUserData();
-              GetAllAds().fetchAdData();
-            },
-            icon: Icon(Icons.refresh),
-          ) */
+     
 
       body: FutureBuilder(
         future: GetAllAds().fetchAdData(),
         builder: ((context, snapshot) {
-          print(snapshot);
+         
           if (snapshot.hasData) {
             List<Ad> ads = snapshot.data!;
 
@@ -103,9 +97,6 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: const Color(0xfff25723),
         child: const Icon(Icons.add_photo_alternate_outlined),
       ),
-
-
-
     );
   }
 }

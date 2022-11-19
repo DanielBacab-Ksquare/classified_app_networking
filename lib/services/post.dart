@@ -31,7 +31,6 @@ class PostService {
     var postData = respJson['data'];
     user = postData;
 
-    print("Pasa esto: $user");
     return user;
   }
 

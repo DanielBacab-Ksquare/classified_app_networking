@@ -30,7 +30,7 @@ class SettingsScreen extends StatelessWidget {
           child: SizedBox(
             width: 350,
             child: Column(children: [
-              SizedBox(height: 18),
+              const SizedBox(height: 18),
               
 
               //profile
@@ -39,7 +39,7 @@ class SettingsScreen extends StatelessWidget {
                 builder: ((context, snapshot) {
                   if (snapshot.hasData) {
                     Map user = snapshot.data!;
-                    print("En settings llega: $user");
+                  
                     return Row(
                       children: [
                         //profile

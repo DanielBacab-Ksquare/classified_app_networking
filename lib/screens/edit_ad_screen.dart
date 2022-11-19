@@ -269,7 +269,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 15,),
+                    const SizedBox(height: 15,),
                     _widgetOptions.elementAt(_isLoading),
                   ],
                 ),
