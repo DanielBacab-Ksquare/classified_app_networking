@@ -17,14 +17,18 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<EditProfileScreen> {
-  int _isLoading = 0;
-  bool firstConditions = true;
+  int _bottomState = 0;
+  bool _firstConditions = true;
+  bool _uploadingImage = false;
 
   final List<Widget> _widgetOptions = <Widget>[
     const Text(
-      'Wait for your image to load before entering other data',
+      '',
     ),
     const CircularProgressIndicator(),
+    const Text(
+      'Wait for your image to load before submit',
+    ),
   ];
 
   String _imagePath = '';
@@ -33,6 +37,9 @@ class _MyWidgetState extends State<EditProfileScreen> {
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
 
   bool firstPic = true;
+  TextEditingController _nameCtrl = TextEditingController();
+  TextEditingController _emailCtrl = TextEditingController();
+  TextEditingController _mobileCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +60,11 @@ class _MyWidgetState extends State<EditProfileScreen> {
                 if (snapshot.hasData) {
                   Map user = snapshot.data!;
 
-                  
-                    TextEditingController _nameCtrl =
-                        TextEditingController(text: user["name"]);
-                    TextEditingController? _emailCtrl =
-                        TextEditingController(text: user["email"]);
-                    TextEditingController? _mobileCtrl =
-                        TextEditingController(text: user["mobile"]);
-                  
+                  if (_firstConditions) {
+                    _nameCtrl = TextEditingController(text: user["name"]);
+                    _emailCtrl = TextEditingController(text: user["email"]);
+                    _mobileCtrl = TextEditingController(text: user["mobile"]);
+                  }
 
                   if (firstPic) {
                     profilePic = user["imgURL"];
@@ -76,11 +80,12 @@ class _MyWidgetState extends State<EditProfileScreen> {
                     var response = await request.send();
                     var resp = await response.stream.bytesToString();
                     var respJson = jsonDecode(resp);
+
+                    _imageServerPath = respJson['data']['path'];
+                    firstPic = false;
                     setState(() {
-                      _imageServerPath = respJson['data']['path'];
-                      firstPic = false;
                       profilePic = _imageServerPath;
-                      //print("esto hay: $localImages2");
+                      _uploadingImage = false;
                     });
                   }
 
@@ -89,8 +94,8 @@ class _MyWidgetState extends State<EditProfileScreen> {
                         .pickImage(source: ImageSource.gallery);
                     if (file != null) {
                       setState(() {
+                        //_nameCtrl = _nameCtrl;
                         _imagePath = file.path;
-                        firstConditions = false;
                       });
                       _upload(file.path);
                     }
@@ -104,8 +109,15 @@ class _MyWidgetState extends State<EditProfileScreen> {
                       //avatar
                       GestureDetector(
                         onTap: () {
+                          _firstConditions = false;
+                          _uploadingImage = true;
+
                           //change profile pic
-                          captureImageFromGallery();
+                          Future.delayed(const Duration(milliseconds: 1), () {
+                            captureImageFromGallery();
+                          });
+
+                          //finish onTap
                         },
                         child: CircleAvatar(
                           maxRadius: 45,
@@ -191,26 +203,36 @@ class _MyWidgetState extends State<EditProfileScreen> {
                               child: ElevatedButton(
                                 onPressed: () {
                                   //here goes the update
-                                  setState(() {
-                                    _isLoading = 1;
-                                  });
-
-                                  UserModel user = UserModel(
-                                    name: _nameCtrl.text,
-                                    email: _emailCtrl.text,
-                                    mobile: _mobileCtrl.text,
-                                    imgURL: profilePic,
-                                  );
-
-                                  Future.delayed(
-                                      const Duration(milliseconds: 500), () {
-                                    PatchService().updateProfile(context, user);
+                                  _firstConditions = false;
+                                  if (_uploadingImage == false) {
                                     setState(() {
+                                      _bottomState = 1;
+                                    });
+
+                                    UserModel user = UserModel(
+                                      name: _nameCtrl.text,
+                                      email: _emailCtrl.text,
+                                      mobile: _mobileCtrl.text,
+                                      imgURL: profilePic,
+                                    );
+
+                                    Future.delayed(
+                                        const Duration(milliseconds: 500), () {
+                                      PatchService()
+                                          .updateProfile(context, user);
+
                                       setState(() {
-                                        _isLoading = 0;
+                                        _bottomState = 0;
                                       });
                                     });
-                                  });
+
+                                    //end of first condition
+                                  } else {
+                                    setState(() {
+                                      _bottomState = 2;
+                                    });
+                                  }
+                                  //end of onpress
                                 },
                                 style: ButtonStyle(
                                   padding:
@@ -250,7 +272,7 @@ class _MyWidgetState extends State<EditProfileScreen> {
                                         color: Color(0xfff25723),
                                       ))),
                             ),
-                            _widgetOptions.elementAt(_isLoading),
+                            _widgetOptions.elementAt(_bottomState),
                           ],
                         ),
                       ),

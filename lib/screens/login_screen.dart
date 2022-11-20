@@ -32,9 +32,9 @@ class _MyWidgetState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-          child: Center(
-              child: Column(
-              children: [
+      child: Center(
+          child: Column(
+        children: [
           const Welcome(),
           SizedBox(
             width: 350,
@@ -46,6 +46,7 @@ class _MyWidgetState extends State<LoginScreen> {
                 ),
                 TextField(
                   controller: _emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
@@ -57,6 +58,7 @@ class _MyWidgetState extends State<LoginScreen> {
                 ),
                 TextField(
                   controller: _passwordCtrl,
+                  obscureText: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0))),
@@ -66,7 +68,7 @@ class _MyWidgetState extends State<LoginScreen> {
                 const SizedBox(
                   height: 15,
                 ),
-        
+
                 SizedBox(
                   height: 60,
                   width: double.infinity,
@@ -76,21 +78,20 @@ class _MyWidgetState extends State<LoginScreen> {
                       setState(() {
                         _isLoading = 1;
                       });
-        
+
                       UserModel user = UserModel(
                         email: _emailCtrl.text,
                         password: _passwordCtrl.text,
                       );
-        
+
                       Future.delayed(const Duration(milliseconds: 500), () {
                         AuthService().login(context, user);
+                        setState(() {
                           setState(() {
-                            setState(() {
-                                              _isLoading = 0;
-                                            });
+                            _isLoading = 0;
                           });
                         });
-        
+                      });
                     },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsets>(
@@ -103,7 +104,8 @@ class _MyWidgetState extends State<LoginScreen> {
                     ),
                     child: const Text(
                       "Login",
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -123,13 +125,13 @@ class _MyWidgetState extends State<LoginScreen> {
                             color: Color(0xfff25723),
                           ))),
                 ),
-        
+
                 _widgetOptions.elementAt(_isLoading),
               ],
             ),
           ),
-              ],
-            )),
-        ));
+        ],
+      )),
+    ));
   }
 }

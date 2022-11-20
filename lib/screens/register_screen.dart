@@ -56,6 +56,7 @@ class _MyWidgetState extends State<RegisterScreen> {
         
                 TextField(
                   controller: _emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(0))),
@@ -68,6 +69,7 @@ class _MyWidgetState extends State<RegisterScreen> {
         
                 TextField(
                   controller: _mobileCtrl,
+                   keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(0))),
@@ -79,6 +81,7 @@ class _MyWidgetState extends State<RegisterScreen> {
                 ),
         
                 TextField(
+                  obscureText: true,
                   controller: _passwordCtrl,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(

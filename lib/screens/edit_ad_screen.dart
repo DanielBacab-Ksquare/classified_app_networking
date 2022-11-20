@@ -15,13 +15,28 @@ class EditAdScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<EditAdScreen> {
-   int _isLoading = 0;
+  int _bottomState = 0;
+  bool _firstConditions = true;
+  bool _uploadingImage = false;
+
+  List<String>? localImages = [];
+
+  TextEditingController _title = TextEditingController();
+
+  TextEditingController _description = TextEditingController();
+
+  TextEditingController _mobileCtrl = TextEditingController();
+
+  TextEditingController _price = TextEditingController();
 
   final List<Widget> _widgetOptions = <Widget>[
     const Text(
-      'Wait for your images to load before entering other data',
+      '',
     ),
     const CircularProgressIndicator(),
+    const Text(
+      'Wait for your image to load before submit',
+    ),
   ];
 
   String _imagePath = '';
@@ -29,19 +44,21 @@ class _MyWidgetState extends State<EditAdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _title =
-        TextEditingController(text: widget.productToEdit["product"].title!);
+    if (_firstConditions) {
+      _title =
+          TextEditingController(text: widget.productToEdit["product"].title!);
 
-    TextEditingController? _description = TextEditingController(
-        text: widget.productToEdit["product"].description!);
+      _description = TextEditingController(
+          text: widget.productToEdit["product"].description!);
 
-    TextEditingController? _mobileCtrl =
-        TextEditingController(text: widget.productToEdit["product"].mobile);
+      _mobileCtrl =
+          TextEditingController(text: widget.productToEdit["product"].mobile);
 
-    TextEditingController? _price = TextEditingController(
-        text: widget.productToEdit["product"].price!.toString());
+      _price = TextEditingController(
+          text: widget.productToEdit["product"].price!.toString());
 
-    List<String>? localImages = widget.productToEdit["product"].images!;
+      localImages = widget.productToEdit["product"].images!;
+    }
 
     _upload(filePath) async {
       var url = Uri.parse("https://adlisting.herokuapp.com/upload/profile");
@@ -55,13 +72,13 @@ class _MyWidgetState extends State<EditAdScreen> {
       setState(() {
         _imageServerPath = respJson['data']['path'];
         localImages!.add(_imageServerPath);
+        _uploadingImage = false;
       });
     }
 
     void captureImageFromGallery() async {
       var file = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (file != null) {
-        
         setState(() {
           _imagePath = file.path;
         });
@@ -85,19 +102,24 @@ class _MyWidgetState extends State<EditAdScreen> {
               const SizedBox(
                 height: 15,
               ),
-        
+
               //add photo
               GestureDetector(
                 onTap: () {
                   //Create a new image
-                  captureImageFromGallery();
+                  _firstConditions = false;
+                  _uploadingImage = true;
+
+                  Future.delayed(const Duration(milliseconds: 1), () {
+                    captureImageFromGallery();
+                  });
                 },
                 child: Container(
                   height: 100,
                   width: 100,
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(color: const Color(0xff898888), width: 0.5)),
+                      border: Border.all(
+                          color: const Color(0xff898888), width: 0.5)),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -110,9 +132,9 @@ class _MyWidgetState extends State<EditAdScreen> {
                       ]),
                 ),
               ),
-        
+
               const SizedBox(height: 15),
-        
+
               //images
               Container(
                 padding: const EdgeInsets.only(left: 15),
@@ -127,7 +149,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                                 color: const Color(0xff898888), width: 0.5)),
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Image.network(localImages[index],
+                        child: Image.network(localImages![index],
                             height: 80,
                             width: 80, errorBuilder: (BuildContext context,
                                 Object exception, StackTrace? stackTrace) {
@@ -141,7 +163,7 @@ class _MyWidgetState extends State<EditAdScreen> {
                       );
                     })),
               ),
-        
+
               //text forms
               SizedBox(
                 width: 350,
@@ -159,11 +181,12 @@ class _MyWidgetState extends State<EditAdScreen> {
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Title",
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 15,
                     ),
@@ -176,33 +199,35 @@ class _MyWidgetState extends State<EditAdScreen> {
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Price",
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 15,
                     ),
-        
+
                     //Contact number
                     TextField(
                       controller: _mobileCtrl,
-                      //keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.phone,
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.w500),
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Contact number",
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 15,
                     ),
-        
+
                     //Description
                     TextField(
                       controller: _description,
@@ -212,12 +237,13 @@ class _MyWidgetState extends State<EditAdScreen> {
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Description",
-                         alignLabelWithHint: true,
+                        alignLabelWithHint: true,
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 30,
                     ),
@@ -228,31 +254,36 @@ class _MyWidgetState extends State<EditAdScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           //Here goes the update of the product
-                          setState(() {
-                        _isLoading = 1;
-                             });
-        
-                          Ad ad = Ad(
-                              title: _title.text,
-                              description: _description.text,
-                              price: double.tryParse(_price.text),
-                              mobile: _mobileCtrl.text,
-                              images: localImages,
-                              authorName:
-                                  widget.productToEdit["product"].authorName!);
-        
-                                  Future.delayed(const Duration(milliseconds: 500), () {
-                                  PatchService().updateAd(
-                                        context, ad, widget.productToEdit["product"].sId!);
-                                    setState(() {
-                                      setState(() {
-                                              _isLoading = 0;
-                                            });
-                          });
-                        });
-        
-                         
-                         
+                          _firstConditions = false;
+                          if (_uploadingImage == false) {
+                            setState(() {
+                              _bottomState = 1;
+                            });
+
+                            Ad ad = Ad(
+                                title: _title.text,
+                                description: _description.text,
+                                price: double.tryParse(_price.text),
+                                mobile: _mobileCtrl.text,
+                                images: localImages,
+                                authorName: widget
+                                    .productToEdit["product"].authorName!);
+
+                            Future.delayed(const Duration(milliseconds: 500),
+                                () {
+                              PatchService().updateAd(context, ad,
+                                  widget.productToEdit["product"].sId!);
+                              setState(() {
+                                setState(() {
+                                  _bottomState = 0;
+                                });
+                              });
+                            });
+                          } else {
+                            setState(() {
+                              _bottomState = 2;
+                            });
+                          }
                         },
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all<EdgeInsets>(
@@ -269,8 +300,10 @@ class _MyWidgetState extends State<EditAdScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 15,),
-                    _widgetOptions.elementAt(_isLoading),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    _widgetOptions.elementAt(_bottomState),
                   ],
                 ),
               ),

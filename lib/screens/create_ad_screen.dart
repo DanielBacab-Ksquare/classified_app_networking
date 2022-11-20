@@ -16,13 +16,25 @@ class CreateAdScreen extends StatefulWidget {
 }
 
 class _MyWidgetState extends State<CreateAdScreen> {
-  int _isLoading = 0;
+  int _bottomState = 0;
+  bool _uploadingImage = false;
+
+  TextEditingController _title = TextEditingController();
+
+  TextEditingController _description = TextEditingController();
+
+  TextEditingController _mobileCtrl = TextEditingController();
+
+  TextEditingController _price = TextEditingController();
 
   final List<Widget> _widgetOptions = <Widget>[
     const Text(
-      'Wait for your images to load before entering other data',
+      '',
     ),
     const CircularProgressIndicator(),
+    const Text(
+      'Wait for your images to load before submit',
+    ),
   ];
 
   List<String> localImages2 = [];
@@ -31,14 +43,6 @@ class _MyWidgetState extends State<CreateAdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _title = TextEditingController();
-
-    TextEditingController? _description = TextEditingController();
-
-    TextEditingController? _mobileCtrl = TextEditingController();
-
-    TextEditingController? _price = TextEditingController();
-
     _upload(filePath) async {
       var url = Uri.parse("https://adlisting.herokuapp.com/upload/profile");
       var request = http.MultipartRequest('POST', url);
@@ -50,9 +54,8 @@ class _MyWidgetState extends State<CreateAdScreen> {
       var respJson = jsonDecode(resp);
       setState(() {
         _imageServerPath = respJson['data']['path'];
-
         localImages2.add(_imageServerPath);
-       
+        _uploadingImage = false;
       });
     }
 
@@ -82,19 +85,25 @@ class _MyWidgetState extends State<CreateAdScreen> {
               const SizedBox(
                 height: 15,
               ),
-        
+
               //add photo
               GestureDetector(
                 onTap: () {
                   //Create a new image
-                  captureImageFromGallery();
+
+                  _uploadingImage = true;
+
+                  //change profile pic
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    captureImageFromGallery();
+                  });
                 },
                 child: Container(
                   height: 100,
                   width: 100,
                   decoration: BoxDecoration(
-                      border:
-                          Border.all(color: const Color(0xff898888), width: 0.5)),
+                      border: Border.all(
+                          color: const Color(0xff898888), width: 0.5)),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,9 +116,9 @@ class _MyWidgetState extends State<CreateAdScreen> {
                       ]),
                 ),
               ),
-        
+
               const SizedBox(height: 15),
-        
+
               //images
               Container(
                 padding: const EdgeInsets.only(left: 15),
@@ -138,7 +147,7 @@ class _MyWidgetState extends State<CreateAdScreen> {
                       );
                     })),
               ),
-        
+
               //text forms
               SizedBox(
                 width: 350,
@@ -156,11 +165,12 @@ class _MyWidgetState extends State<CreateAdScreen> {
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Title",
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 15,
                     ),
@@ -173,33 +183,35 @@ class _MyWidgetState extends State<CreateAdScreen> {
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Price",
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 15,
                     ),
-        
+
                     //Contact number
                     TextField(
                       controller: _mobileCtrl,
-                      //keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.phone,
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.w500),
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Contact number",
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 15,
                     ),
-        
+
                     //Description
                     TextField(
                       controller: _description,
@@ -209,12 +221,13 @@ class _MyWidgetState extends State<CreateAdScreen> {
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.all(10),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         labelText: "Description",
                         alignLabelWithHint: true,
                       ),
                     ),
-        
+
                     const SizedBox(
                       height: 30,
                     ),
@@ -225,29 +238,29 @@ class _MyWidgetState extends State<CreateAdScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           //Here goes the update of the product
-                           setState(() {
-                        _isLoading = 1;
-                             });
-        
-                          Ad ad = Ad(
+
+                          _bottomState = 1;
+
+                          if (_uploadingImage == false) {
+                            Ad ad = Ad(
                               title: _title.text,
                               description: _description.text,
                               price: double.tryParse(_price.text),
                               mobile: _mobileCtrl.text,
                               images: localImages2,
-                              );
-        
-                              
-                                  Future.delayed(const Duration(milliseconds: 500), () {
-                                 PostService().createAd(context, ad); 
-                                    setState(() {
-                                      setState(() {
-                                              _isLoading = 0;
-                                            });
-                          });
-                        });
-                         
-                          
+                            );
+
+                            Future.delayed(const Duration(milliseconds: 500),
+                                () {
+                              PostService().createAd(context, ad);
+
+                              _bottomState = 0;
+                            });
+                          } else {
+                            setState(() {
+                              _bottomState = 2;
+                            });
+                          }
                         },
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all<EdgeInsets>(
@@ -264,8 +277,10 @@ class _MyWidgetState extends State<CreateAdScreen> {
                         ),
                       ),
                     ),
-                     const SizedBox(height: 15,),
-                    _widgetOptions.elementAt(_isLoading),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    _widgetOptions.elementAt(_bottomState),
                   ],
                 ),
               ),
